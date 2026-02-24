@@ -73,7 +73,6 @@ document.addEventListener("DOMContentLoaded", () => {
         document.getElementById("loginEmail").value = "";
         document.getElementById("loginPassword").value = "";
       } catch (e) {
-        console.error("❌ Error de login:", e.code, e.message);
         
         let errorMsg = "Error al iniciar sesión";
         if (e.code === "auth/user-not-found") {
@@ -94,7 +93,6 @@ document.addEventListener("DOMContentLoaded", () => {
       }
     });
   } else {
-    console.error("✗ No se encontró el botón loginBtn");
   }
 
   /* SIGNUP */
@@ -130,7 +128,6 @@ document.addEventListener("DOMContentLoaded", () => {
         document.getElementById("signupPasswordConfirm").value = "";
         toggleAuthForm({ preventDefault: () => {} });
       } catch (e) {
-        console.error("❌ Error de signup:", e.code, e.message);
         
         let errorMsg = "Error al registrarse";
         if (e.code === "auth/email-already-in-use") {
@@ -248,7 +245,6 @@ async function loadMovies() {
       ...d.data()
     }));
   } catch (e) {
-    console.error("Error loading movies:", e);
     allMovies = [];
   }
 }
@@ -513,7 +509,6 @@ async function deleteMovie(movieId, modalBg) {
   console.log("deleteMovie llamada con movieId:", movieId);
   
   if (!movieId) {
-    console.error("❌ No se pasó movieId");
     alert("Error: ID de película no encontrado");
     return;
   }
@@ -535,7 +530,6 @@ async function deleteMovie(movieId, modalBg) {
       renderCalendar();
       console.log("✓ Calendario re-renderizado");
     } catch (e) {
-      console.error("❌ Error eliminando:", e);
       alert("Error al eliminar: " + e.message);
     }
   } else {
@@ -688,7 +682,6 @@ function openAddMovieForm(year, month, day) {
         form.remove();
         renderCalendar();
       } catch (e) {
-        console.error("❌ Error al guardar:", e);
         alert("Error al guardar: " + e.message);
       }
     };
@@ -696,7 +689,3 @@ function openAddMovieForm(year, month, day) {
 
   form.onclick = e => { if (e.target === form) form.remove(); };
 }
-
-/* STATS/RANKINGS */
-
-/* Rankings view removed per user request */
