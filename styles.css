@@ -1,0 +1,1123 @@
+:root {
+  --accent: #a78bfa;
+  --accent-secondary: #60a5fa;
+  --accent-subtle: #7c3aed;
+  --radius: 14px;
+  --transition: 200ms ease;
+}
+
+/* DEFAULT: dark theme variables (apply when no explicit class) */
+body {
+  --bg: #14161c;
+  --card: #1e1f26;
+  --text: #ffffff;
+  --shadow: rgba(96, 165, 250, 0.15);
+  --toggle-off: #3d3f46;
+  --toggle-on: #7c3aed;
+  --border: rgba(167, 139, 250, 0.08);
+}
+
+/* DARK MODE */
+body.dark {
+  --bg: #14161c;
+  --card: #1e1f26;
+  --text: #ffffff;
+  --shadow: rgba(96, 165, 250, 0.15);
+  --toggle-off: #3d3f46;
+  --toggle-on: #7c3aed;
+  --border: rgba(167, 139, 250, 0.08);
+}
+
+/* LIGHT MODE */
+body.light {
+  --bg: #e6f0ff;
+  --card: #ffffff;
+  --text: #1e1f26;
+  --shadow: rgba(124, 58, 237, 0.06);
+  --accent-secondary: #2b6cb0; /* slightly darker blue for contrast */
+  --accent-subtle: #5b21b6; /* slightly darker purple */
+  --toggle-off: #d1d5db;
+  --toggle-on: #7c3aed;
+  --border: rgba(167, 139, 250, 0.08);
+}
+
+* {
+  box-sizing: border-box;
+  transition: background var(--transition),
+              color var(--transition),
+              transform var(--transition),
+              border-color var(--transition);
+}
+
+body {
+  margin: 0;
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', system-ui, sans-serif;
+  background: var(--bg);
+  color: var(--text);
+  padding: 0;
+}
+
+/* prevent horizontal scrollbars from layout quirks */
+html, body { overflow-x: hidden; }
+
+header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 1rem 2rem;
+  border-bottom: 1px solid var(--border);
+  gap: 1rem;
+  flex-wrap: wrap;
+}
+
+.header-left h1 {
+  margin: 0;
+  font-size: 1.8rem;
+  font-weight: 700;
+}
+
+nav {
+  display: flex;
+  gap: 0.8rem;
+  align-items: center;
+  flex-wrap: wrap;
+}
+
+button {
+  background: var(--accent-secondary);
+  border: none;
+  padding: 12px 20px;
+  border-radius: var(--radius);
+  color: white;
+  cursor: pointer;
+  box-shadow: 0 4px 12px var(--shadow);
+  font-weight: 500;
+  font-size: 1rem;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  transition: all var(--transition);
+}
+
+button:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 16px var(--shadow);
+}
+
+button svg {
+  width: 20px;
+  height: 20px;
+}
+
+.nav-active {
+  background: var(--accent-subtle);
+}
+
+.theme-btn {
+  background: transparent;
+  box-shadow: none;
+  padding: 10px;
+  color: var(--text);
+}
+
+.sun-icon, .moon-icon {
+  width: 22px;
+  height: 22px;
+}
+
+#app {
+  padding: 1.5rem;
+  height: calc(100vh - 80px);
+  display: flex;
+  flex-direction: column;
+  overflow: auto;
+}
+
+.card {
+  background: var(--card);
+  padding: 1rem;
+  border-radius: var(--radius);
+  box-shadow: 0 10px 25px var(--shadow);
+  border: 1px solid var(--border);
+}
+
+.centered {
+  height: 100vh;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 1rem;
+}
+
+.auth-container {
+  position: relative;
+  width: 100%;
+  max-width: 380px;
+}
+
+.login-card {
+  width: 100%;
+  max-width: 380px;
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+  padding: 2.5rem;
+}
+
+.login-icon {
+  width: 60px;
+  height: 60px;
+  background: linear-gradient(135deg, var(--accent-subtle) 0%, var(--accent-secondary) 100%);
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin: 0 auto 0.5rem;
+  color: white;
+}
+
+.login-icon svg {
+  width: 32px;
+  height: 32px;
+}
+
+.login-card h2 {
+  text-align: center;
+  margin: 0 0 1rem;
+  font-size: 2rem;
+  font-weight: 700;
+}
+
+.login-card input {
+  padding: 12px 14px;
+  border-radius: var(--radius);
+  border: 2px solid var(--border);
+  background: var(--card);
+  color: var(--text);
+  font-size: 15px;
+  transition: all var(--transition);
+}
+
+.login-card input:focus {
+  outline: none;
+  border-color: var(--accent-subtle);
+  box-shadow: 0 0 0 3px rgba(124, 58, 237, 0.1);
+}
+
+.login-card button {
+  margin-top: 0.5rem;
+  font-size: 1.05rem;
+  padding: 14px 20px;
+}
+
+.auth-toggle {
+  text-align: center;
+  font-size: 0.9rem;
+  margin: 0;
+  opacity: 0.8;
+}
+
+.auth-toggle a {
+  color: var(--accent-secondary);
+  text-decoration: none;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.auth-toggle a:hover {
+  text-decoration: underline;
+}
+
+/* CALENDAR */
+
+.calendar-grid {
+  display: grid;
+  grid-template-columns: repeat(7, 1fr);
+  gap: 8px;
+  width: 100%;
+  height: 100%;
+  grid-auto-rows: minmax(120px, auto);
+}
+
+.calendar-day {
+  background: var(--card);
+  padding: 0.75rem;
+  border-radius: 8px;
+  cursor: pointer;
+  position: relative;
+  border: 2px solid var(--border);
+  border-bottom: 3px solid var(--border);
+  transition: all var(--transition);
+  font-weight: 600;
+  font-size: 0.9rem;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  justify-content: flex-start;
+  overflow: hidden;
+  min-height: 120px;
+  background: linear-gradient(180deg, var(--card) 0%, rgba(96, 165, 250, 0.03) 100%);
+}
+
+.calendar-day:hover {
+  border-color: var(--accent-secondary);
+  border-bottom-color: var(--accent-secondary);
+  box-shadow: 0 4px 12px var(--shadow);
+  transform: translateY(-2px);
+}
+
+.calendar-day.today {
+  background: var(--card);
+  border-color: var(--accent-secondary);
+  box-shadow: 0 6px 18px rgba(96,165,250,0.06);
+  color: inherit;
+}
+
+.calendar-day.today::after {
+  content: '';
+  position: absolute;
+  left: 0;
+  bottom: 0;
+  width: 100%;
+  height: 12px;
+  background: linear-gradient(90deg, var(--accent-secondary) 0%, var(--accent-subtle) 100%);
+  box-shadow: 0 -6px 18px rgba(96,165,250,0.08) inset;
+}
+
+.calendar-day-number {
+  font-size: 1rem;
+  font-weight: 700;
+  margin-bottom: 0.5rem;
+}
+
+.calendar-day-movies {
+  font-size: 0.8rem;
+  opacity: 0.85;
+  overflow: hidden;
+  line-height: 1.4;
+  width: 100%;
+  text-align: left;
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+  margin-top: 0.25rem;
+}
+
+.calendar-day-empty {
+  background: transparent;
+  cursor: default;
+}
+
+.dot {
+  width: 5px;
+  height: 5px;
+  background: var(--accent-secondary);
+  border-radius: 50%;
+  position: absolute;
+  bottom: 6px;
+  right: 6px;
+  box-shadow: 0 0 4px rgba(96, 165, 250, 0.5);
+}
+
+.dot.multiple {
+  width: 7px;
+  height: 7px;
+  box-shadow: 0 0 6px rgba(96, 165, 250, 0.7);
+}
+
+/* For the day that is 'today', place the small indicator at top-right so the bottom stripe doesn't cover it */
+.calendar-day.today .dot {
+  top: 8px;
+  right: 8px;
+  bottom: auto;
+  box-shadow: 0 0 8px rgba(96,165,250,0.9);
+}
+
+/* MODALS */
+
+.modal-bg {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.7);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 1000;
+  padding: 1rem;
+  animation: fadeIn 150ms ease;
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+.modal {
+  background: var(--card);
+  padding: 2rem;
+  border-radius: var(--radius);
+  width: 100%;
+  max-width: 650px;
+  max-height: 85vh;
+  overflow-y: auto;
+  animation: slideUp 200ms ease;
+  box-shadow: 0 25px 50px rgba(0, 0, 0, 0.3);
+}
+
+/* Day modal (opened from calendar) - narrower and more compact cards */
+#modalContainer .modal {
+  max-width: 540px;
+  width: 82%;
+  padding: 1.25rem;
+  box-shadow: 0 20px 40px rgba(0,0,0,0.15);
+}
+
+#modalContainer .modal .movies-list {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+  margin: 0.75rem 0 1rem 0;
+}
+
+#modalContainer .modal .movie-card {
+  padding: 0.85rem;
+  border-radius: 10px;
+  border-width: 1px;
+}
+
+/* Calendar navigation styling */
+.calendar-nav {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 1rem;
+  padding: 0 12px;
+  width: 100%;
+  box-sizing: border-box;
+}
+.calendar-nav .calendar-title {
+  text-align: center;
+  margin: 0;
+  font-size: 1.6rem;
+  position: relative;
+}
+.calendar-nav .nav-btn {
+  cursor: pointer;
+  color: var(--accent-secondary);
+  font-weight: 600;
+  font-size: 0.95rem;
+  user-select: none;
+  padding: 0.25rem 0.6rem;
+  border-radius: 6px;
+  transition: opacity var(--transition);
+}
+.calendar-nav .nav-btn:hover { opacity: 0.8; }
+
+/* Weekday headers styling (use same columns as the grid) */
+.weekdays {
+  display: grid;
+  grid-template-columns: repeat(7, 1fr);
+  gap: 8px;
+}
+.weekdays > div {
+  text-align: center;
+  font-weight: bold;
+  padding: 0.5rem;
+  color: var(--accent-secondary);
+  font-size: 0.9rem;
+}
+
+/* Improve contrast for day cards in light mode */
+body.light .calendar-day {
+  border-color: rgba(30,30,30,0.06);
+  box-shadow: 0 6px 14px rgba(0,0,0,0.06);
+}
+
+/* Mobile-specific header tweaks: move theme toggle left and logout right, hide calendar button */
+@media (max-width: 768px) {
+  header { align-items: center; }
+  nav { width: 100%; justify-content: center; }
+  .theme-btn { order: -1; }
+  #logoutBtn { order: 1; }
+  #calendarBtn { display: none; }
+  /* On small screens ensure calendar nav fits and buttons sit beside title */
+  .calendar-nav { justify-content: space-between; }
+  .calendar-nav { position: relative; }
+  .calendar-nav .calendar-title { position: absolute; left: 50%; transform: translateX(-50%); }
+}
+
+/* On small screens place theme toggle top-left and logout top-right */
+@media (max-width: 480px) {
+  header { position: relative; height: 56px; }
+  .theme-btn { position: absolute; left: 10px; top: 50%; transform: translateY(-50%); z-index: 60; }
+  #logoutBtn { position: absolute; right: 10px; top: 50%; transform: translateY(-50%); z-index: 60; }
+  nav { justify-content: center; }
+  /* hide calendar button on smallest screens as well */
+  #calendarBtn { display: none; }
+  /* Center title absolutely and ensure side buttons don't overlap */
+  .calendar-nav { position: relative; }
+  .calendar-nav .calendar-title { position: absolute; left: 50%; transform: translateX(-50%); font-size: 1.1rem; }
+  .calendar-nav .nav-btn { padding: 0.2rem 0.5rem; }
+  .calendar-grid { gap: 6px; grid-auto-rows: minmax(80px, auto); }
+  .calendar-day { min-height: 80px; padding: 0.5rem; }
+  .weekdays > div { font-size: 0.7rem; }
+}
+
+/* Landscape on small devices: keep title centered and buttons at sides */
+@media (max-width: 812px) and (orientation: landscape) {
+  .calendar-nav { justify-content: space-between; padding: 0 8px; }
+  .calendar-nav .calendar-title { font-size: 1.4rem; }
+  .calendar-grid { grid-auto-rows: minmax(90px, auto); gap: 6px; }
+  .calendar-day { min-height: 90px; }
+}
+
+@media (max-width: 640px) {
+  #modalContainer .modal {
+    width: 96%;
+    max-width: 520px;
+    padding: 1rem;
+  }
+  #modalContainer .modal .movie-card {
+    padding: 0.9rem;
+  }
+}
+
+@keyframes slideUp {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.modal h3 {
+  margin-top: 0;
+  margin-bottom: 1.5rem;
+  font-size: 1.4rem;
+  font-weight: 700;
+}
+
+.modal h4 {
+  margin: 1.5rem 0 1rem;
+  color: var(--text);
+  font-size: 1rem;
+  opacity: 0.8;
+}
+
+/* MOVIES LIST */
+
+.movies-list {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+  margin: 1.5rem 0;
+}
+
+.movie-card {
+  background: var(--card);
+  padding: 1.5rem;
+  border-radius: var(--radius);
+  border: 2px solid var(--border);
+  position: relative;
+  overflow: hidden;
+  animation: scaleIn 200ms ease;
+  transition: all var(--transition);
+}
+
+.movie-card:hover {
+  border-color: var(--accent-secondary);
+  box-shadow: 0 8px 20px var(--shadow);
+  transform: translateY(-2px);
+}
+
+.movie-card::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 3px;
+  height: 100%;
+  background: linear-gradient(180deg, var(--accent-subtle) 0%, var(--accent-secondary) 100%);
+}
+
+@keyframes scaleIn {
+  from {
+    opacity: 0;
+    transform: scale(0.95);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+.movie-card h4 {
+  margin: 0 0 0.2rem 0;
+  position: relative;
+  z-index: 1;
+  font-size: 1.05rem;
+}
+
+.movie-card p {
+  margin: 0;
+  font-size: 0.85rem;
+  position: relative;
+  z-index: 1;
+  opacity: 0.7;
+}
+
+.rating-display {
+  display: flex;
+  gap: 1rem;
+  margin-top: 0.6rem;
+  position: relative;
+  z-index: 1;
+}
+
+.rating-item {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.rating-item label {
+  font-size: 0.82rem;
+  font-weight: 600;
+  display: block;
+  margin-bottom: 0;
+  opacity: 0.7;
+}
+
+.rating-value {
+  display: inline-block;
+  padding: 0.18rem 0.45rem;
+  border-radius: 999px;
+  background: rgba(96,165,250,0.12);
+  color: var(--accent-secondary);
+  font-weight: 700;
+  min-width: 36px;
+  text-align: center;
+}
+
+.rating-value.empty {
+  background: transparent;
+  color: rgba(255,255,255,0.55);
+  font-weight: 600;
+}
+
+.rating-value {
+  font-size: 1.3rem;
+  font-weight: bold;
+  color: var(--accent-secondary);
+}
+
+.rating-value.empty {
+  opacity: 0.4;
+  font-size: 0.9rem;
+}
+
+/* TOGGLE SWITCH */
+
+.toggle-container {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  margin-bottom: 1.5rem;
+}
+
+.toggle-container label {
+  font-weight: 600;
+  flex: 1;
+  margin: 0;
+}
+
+.toggle-switch {
+  position: relative;
+  width: 56px;
+  height: 32px;
+  background: var(--toggle-off);
+  border-radius: 16px;
+  cursor: pointer;
+  transition: background var(--transition);
+  border: none;
+  padding: 0;
+  box-shadow: none;
+}
+
+.toggle-switch::after {
+  content: '';
+  position: absolute;
+  width: 28px;
+  height: 28px;
+  background: white;
+  border-radius: 50%;
+  top: 2px;
+  left: 2px;
+  transition: left var(--transition);
+}
+
+.toggle-switch.active {
+  background: var(--toggle-on);
+}
+
+.toggle-switch.active::after {
+  left: 26px;
+}
+
+/* SLIDERS */
+
+input[type="range"] {
+  width: 100%;
+  height: 6px;
+  border-radius: 3px;
+  background: var(--border);
+  outline: none;
+  -webkit-appearance: none;
+  appearance: none;
+  margin: 0.8rem 0;
+  cursor: pointer;
+}
+
+input[type="range"]::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  appearance: none;
+  width: 22px;
+  height: 22px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, var(--accent-subtle) 0%, var(--accent-secondary) 100%);
+  cursor: pointer;
+  box-shadow: 0 2px 8px var(--shadow);
+}
+
+input[type="range"]::-moz-range-thumb {
+  width: 22px;
+  height: 22px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, var(--accent-subtle) 0%, var(--accent-secondary) 100%);
+  cursor: pointer;
+  border: none;
+  box-shadow: 0 2px 8px var(--shadow);
+}
+
+/* FORMS */
+
+input[type="text"],
+input[type="email"],
+input[type="password"],
+input[type="date"],
+select {
+  width: 100%;
+  padding: 12px 14px;
+  border-radius: var(--radius);
+  border: 2px solid var(--border);
+  background: var(--card);
+  color: var(--text);
+  font-size: 15px;
+  margin-bottom: 1rem;
+  font-family: inherit;
+  transition: all var(--transition);
+}
+
+input[type="text"]:focus,
+input[type="email"]:focus,
+input[type="password"]:focus,
+input[type="date"]:focus,
+select:focus {
+  outline: none;
+  border-color: var(--accent-subtle);
+  box-shadow: 0 0 0 3px rgba(124, 58, 237, 0.1);
+}
+
+.form-group {
+  margin-bottom: 1.2rem;
+}
+
+.form-group label {
+  display: block;
+  margin-bottom: 0.6rem;
+  font-weight: 600;
+  font-size: 0.95rem;
+  opacity: 0.9;
+}
+
+.form-row {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 1rem;
+  margin-bottom: 1rem;
+}
+
+/* RANKINGS VIEW */
+
+.rankings-container {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+  gap: 2rem;
+  width: 100%;
+  max-width: 1200px;
+}
+
+.ranking-section {
+  background: var(--card);
+  padding: 2rem;
+  border-radius: var(--radius);
+  border: 2px solid var(--border);
+}
+
+.ranking-section h3 {
+  margin-top: 0;
+  margin-bottom: 1.5rem;
+  color: var(--text);
+  border-bottom: 2px solid var(--accent-secondary);
+  padding-bottom: 1rem;
+  font-size: 1.1rem;
+}
+
+.ranking-list {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+.ranking-item {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  padding: 1rem;
+  background: var(--border);
+  border-radius: var(--radius);
+  border-left: 4px solid var(--accent-subtle);
+  transition: all var(--transition);
+}
+
+.ranking-item:hover {
+  background: linear-gradient(135deg, rgba(124, 58, 237, 0.1) 0%, rgba(96, 165, 250, 0.1) 100%);
+  transform: translateX(4px);
+}
+
+.ranking-position {
+  font-size: 1.4rem;
+  font-weight: 800;
+  color: var(--accent-subtle);
+  min-width: 32px;
+}
+
+.ranking-content {
+  flex: 1;
+  min-width: 0;
+}
+
+.ranking-title {
+  font-weight: 600;
+  margin: 0 0 0.3rem;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.ranking-meta {
+  font-size: 0.85rem;
+  opacity: 0.6;
+  margin: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.ranking-score {
+  font-size: 1.4rem;
+  font-weight: 800;
+  color: var(--accent-secondary);
+  min-width: 45px;
+  text-align: right;
+}
+
+/* BUTTONS */
+
+.btn-group {
+  display: flex;
+  gap: 1rem;
+  margin-top: 2rem;
+}
+
+.btn-group button {
+  flex: 1;
+  padding: 12px 20px;
+  font-size: 0.95rem;
+  font-weight: 500;
+}
+
+#saveMovie {
+  padding: 12px;
+  font-size: 0.95rem;
+  margin-top: 0;
+  font-weight: 500;
+  background: var(--accent-secondary);
+  color: white;
+  border-radius: 8px;
+  border: none;
+}
+
+#cancelMovie {
+  padding: 12px;
+  font-size: 0.95rem;
+  margin-top: 0;
+  font-weight: 500;
+  background: #6b7280;
+  color: white;
+  border-radius: 8px;
+  border: none;
+}
+
+/* Ensure buttons inside modal .btn-group are equal-sized */
+.modal .btn-group button {
+  flex: 1;
+  width: auto;
+}
+
+/* Small inline add button in modal header */
+.add-inline-btn {
+  background: var(--accent-secondary);
+  color: white;
+  padding: 8px 12px;
+  border-radius: 8px;
+  border: none;
+  font-weight: 600;
+  cursor: pointer;
+  box-shadow: 0 6px 16px var(--shadow);
+}
+
+.btn-delete {
+
+  background: transparent;
+  padding: 6px;
+  width: 36px;
+  height: 36px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 0.85rem;
+  box-shadow: none;
+  color: #ef4444;
+  cursor: pointer;
+  flex-shrink: 0;
+  border-radius: 999px;
+  transition: all var(--transition);
+  position: absolute;
+  top: 8px;
+  right: 8px;
+  background: rgba(239,68,68,0.04);
+}
+
+.btn-delete:hover {
+  background: rgba(239,68,68,0.12);
+  color: #dc2626;
+  transform: translateY(-2px) scale(1.05);
+}
+
+.btn-delete svg {
+  width: 16px;
+  height: 16px;
+}
+
+#cancelMovie {
+  background: #6b7280;
+}
+
+#cancelMovie:hover {
+  background: #4b5563;
+}
+
+/* RESPONSIVE */
+
+@media (max-width: 1024px) {
+  .calendar-grid {
+    gap: 10px;
+  }
+
+  button {
+    padding: 10px 16px;
+    font-size: 0.95rem;
+  }
+
+  button svg {
+    width: 18px;
+    height: 18px;
+  }
+
+  nav {
+    gap: 0.6rem;
+  }
+}
+
+@media (max-width: 768px) {
+  header {
+    flex-direction: column;
+    padding: 1rem;
+  }
+
+  .header-left h1 {
+    font-size: 1.5rem;
+  }
+
+  nav {
+    width: 100%;
+    justify-content: space-between;
+  }
+
+  nav button {
+    padding: 10px 12px;
+    font-size: 0.9rem;
+    flex: 1;
+    justify-content: center;
+  }
+
+  #app {
+    padding: 0.8rem;
+    height: calc(100vh - 140px);
+  }
+
+  .calendar-grid {
+    grid-template-columns: repeat(7, 1fr);
+    gap: 8px;
+  }
+
+  .calendar-day {
+    padding: 0.8rem;
+    font-size: 0.9rem;
+    border-radius: 10px;
+  }
+
+  .calendar-day-number {
+    font-size: 1.1rem;
+  }
+
+  .calendar-day-movies {
+    font-size: 0.65rem;
+  }
+
+  .modal {
+    padding: 1.5rem;
+    max-width: 95%;
+    max-height: 90vh;
+  }
+
+  .form-row {
+    grid-template-columns: 1fr;
+  }
+
+  .rankings-container {
+    grid-template-columns: 1fr;
+  }
+
+  .rating-display {
+    flex-direction: row;
+    gap: 1rem;
+  }
+
+  .ranking-section {
+    padding: 1.5rem;
+  }
+
+  .login-card {
+    max-width: 100%;
+    padding: 1.5rem;
+  }
+
+  .auth-toggle {
+    font-size: 0.85rem;
+  }
+}
+
+@media (max-width: 480px) {
+  header {
+    gap: 0.5rem;
+    padding: 0.8rem;
+  }
+
+  header h1 {
+    font-size: 1.2rem;
+  }
+
+  nav {
+    gap: 0.4rem;
+  }
+
+  nav button {
+    padding: 8px 10px;
+    font-size: 0.8rem;
+  }
+
+  button svg {
+    width: 16px;
+    height: 16px;
+  }
+
+  #app {
+    padding: 0.6rem;
+  }
+
+  .calendar-grid {
+    grid-template-columns: repeat(7, 1fr);
+    gap: 6px;
+  }
+
+  .calendar-day {
+    padding: 0.6rem;
+    font-size: 0.8rem;
+    border-radius: 8px;
+  }
+
+  .calendar-day-number {
+    font-size: 0.95rem;
+  }
+
+  .calendar-day-movies {
+    font-size: 0.6rem;
+  }
+
+  .movie-card {
+    padding: 1rem;
+  }
+
+  .modal {
+    padding: 1rem;
+    max-width: 100%;
+  }
+
+  input[type="text"],
+  input[type="email"],
+  input[type="password"],
+  input[type="date"],
+  select {
+    padding: 10px 12px;
+    font-size: 14px;
+  }
+
+  button {
+    padding: 12px 16px;
+  }
+}
+
+/* SCROLLBAR */
+
+::-webkit-scrollbar {
+  width: 8px;
+}
+
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+::-webkit-scrollbar-thumb {
+  background: var(--accent-subtle);
+  border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: var(--accent-secondary);
+}
