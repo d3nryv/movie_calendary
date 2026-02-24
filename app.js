@@ -11,6 +11,7 @@ import {
   addDoc,
   getDocs,
   deleteDoc,
+  updateDoc,
   doc,
   serverTimestamp,
   query,
@@ -167,7 +168,7 @@ document.addEventListener("DOMContentLoaded", () => {
 /* ─────────────────────────────────────────────
    EVENT DELEGATION — solo para botones dinámicos
    que NO tienen listener propio adjunto en el momento
-   de creación (btn-delete y cancelMovie).
+   de creación (btn-delete, btn-edit, cancelMovie).
    Los toggle-switch del formulario se manejan
    directamente en openAddMovieForm, así que los
    EXCLUIMOS aquí para evitar doble ejecución.
@@ -181,7 +182,22 @@ document.addEventListener("click", (e) => {
     e.stopPropagation();
     const movieId = deleteBtn.dataset.movieId;
     const modalBg = deleteBtn.closest(".modal-bg");
-    deleteMovie(movieId, modalBg);
+    if (movieId) {
+      deleteMovie(movieId, modalBg);
+    }
+    return;
+  }
+
+  // Botón editar película (solo ratings)
+  const editBtn = e.target.closest(".btn-edit");
+  if (editBtn) {
+    e.preventDefault();
+    e.stopPropagation();
+    const movieId = editBtn.dataset.movieId;
+    const modalBg = editBtn.closest(".modal-bg");
+    if (movieId) {
+      editMovieRatings(movieId, modalBg);
+    }
     return;
   }
 
@@ -413,30 +429,43 @@ function openDayModal(year, month, day) {
     const card = document.createElement("div");
     card.className = "movie-card";
     card.innerHTML = `
-      <button class="btn-delete" title="Eliminar" data-movie-id="${movie.id}" style="align-self: flex-end;">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-          <polyline points="3 6 5 6 21 6"></polyline>
-          <path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path>
-          <line x1="10" y1="11" x2="10" y2="17"></line>
-          <line x1="14" y1="11" x2="14" y2="17"></line>
-        </svg>
-      </button>
+      <div style="display: flex; gap: 0.5rem; align-self: flex-end;">
+        <button class="btn-edit" title="Editar ratings" data-movie-id="${movie.id}" style="padding: 0.5rem; background: rgba(59, 130, 246, 0.2); border: 1px solid var(--accent-secondary); border-radius: 6px; color: var(--accent-secondary); cursor: pointer; display: flex; align-items: center; justify-content: center;">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width: 18px; height: 18px;">
+            <path d="M17 3a2.828 2.828 0 1 1 4 4L7.5 20.5 2 22l1.5-5.5L21 3z"></path>
+          </svg>
+        </button>
+        <button class="btn-delete" title="Eliminar" data-movie-id="${movie.id}" style="padding: 0.5rem; background: rgba(239, 68, 68, 0.2); border: 1px solid #ef4444; border-radius: 6px; color: #ef4444; cursor: pointer; display: flex; align-items: center; justify-content: center;">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width: 18px; height: 18px;">
+            <polyline points="3 6 5 6 21 6"></polyline>
+            <path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path>
+            <line x1="10" y1="11" x2="10" y2="17"></line>
+            <line x1="14" y1="11" x2="14" y2="17"></line>
+          </svg>
+        </button>
+      </div>
       <div style="flex: 1; width: 100%;">
         <h4 style="margin: 0.5rem 0 0.25rem 0;">${movie.title}</h4>
         <p style="margin: 0.25rem 0; font-size: 0.85rem; opacity: 0.7;">${movie.director}</p>
         <div class="rating-display" style="margin-top: 0.75rem;">
+          ${hasEla ? `
           <div class="rating-item">
             <label>Ela</label>
-            <div class="rating-value ${hasEla ? "" : "empty"}">${hasEla ? movie.ratings.ela.toFixed(1) : "—"}</div>
+            <div class="rating-value" style="background: ${movie?.ratingColors?.ela || '#60a5fa'}20; border: 2px solid ${movie?.ratingColors?.ela || '#60a5fa'};">${movie.ratings.ela.toFixed(1)}</div>
           </div>
+          ` : ''}
+          ${hasDete ? `
           <div class="rating-item">
             <label>Dete</label>
-            <div class="rating-value ${hasDete ? "" : "empty"}">${hasDete ? movie.ratings.dete.toFixed(1) : "—"}</div>
+            <div class="rating-value" style="background: ${movie?.ratingColors?.dete || '#fbbf24'}20; border: 2px solid ${movie?.ratingColors?.dete || '#fbbf24'};">${movie.ratings.dete.toFixed(1)}</div>
           </div>
+          ` : ''}
+          ${hasAli ? `
           <div class="rating-item">
             <label>Ali</label>
-            <div class="rating-value ${hasAli ? "" : "empty"}">${hasAli ? movie.ratings.ali.toFixed(1) : "—"}</div>
+            <div class="rating-value" style="background: ${movie?.ratingColors?.ali || '#34d399'}20; border: 2px solid ${movie?.ratingColors?.ali || '#34d399'};">${movie.ratings.ali.toFixed(1)}</div>
           </div>
+          ` : ''}
           ${avg ? `<div class="rating-item"><label>Media</label><div class="rating-value">${avg}</div></div>` : ""}
         </div>
       </div>
@@ -455,7 +484,7 @@ function openDayModal(year, month, day) {
   }
 }
 
-/* DELETE MOVIE */
+/**  DELETE MOVIE */
 async function deleteMovie(movieId, modalBg) {
   if (!movieId) { alert("Error: ID de película no encontrado"); return; }
   if (confirm("¿Estás seguro de que quieres eliminar esta película?")) {
@@ -468,6 +497,162 @@ async function deleteMovie(movieId, modalBg) {
       alert("Error al eliminar: " + e.message);
     }
   }
+}
+
+/* EDIT MOVIE RATINGS ONLY */
+function editMovieRatings(movieId, currentModalBg) {
+  const movie = allMovies.find(m => m.id === movieId);
+  if (!movie) {
+    alert("Película no encontrada");
+    return;
+  }
+
+  const hasEla  = movie.ratings?.ela  != null;
+  const hasDete = movie.ratings?.dete != null;
+  const hasAli  = movie.ratings?.ali  != null;
+
+  const form = document.createElement("div");
+  form.className = "modal-bg";
+
+  const modal = document.createElement("div");
+  modal.className = "modal";
+
+  modal.innerHTML = `
+    <h3>Editar Ratings - ${movie.title}</h3>
+    
+    <h4 style="margin: 1.5rem 0 1rem; color: var(--accent);">Ratings y Colores</h4>
+
+    <div class="toggle-container" style="align-items: center;">
+      <label for="elaToggleEdit">Rating de Ela</label>
+      <div class="toggle-switch" id="elaToggleEdit"></div>
+      <input type="color" id="elaColorPicker" value="${movie?.ratingColors?.ela || '#60a5fa'}" style="width: 50px; height: 40px; border: none; border-radius: 8px; cursor: pointer; margin-left: auto;" />
+    </div>
+    <div id="elaSliderContainerEdit" style="display: ${hasEla ? 'block' : 'none'}; margin-bottom: 1rem;">
+      <div style="display: flex; justify-content: space-between; align-items: center;">
+        <label>Puntuación</label>
+        <span id="elaValueEdit" style="font-weight: bold; color: var(--accent-secondary);">${hasEla ? movie.ratings.ela.toFixed(1) : '5.0'}</span>
+      </div>
+      <input type="range" id="elaSliderEdit" min="0" max="10" step="0.5" value="${hasEla ? movie.ratings.ela : 5}" />
+    </div>
+
+    <div class="toggle-container" style="align-items: center;">
+      <label for="deteToggleEdit">Rating de Dete</label>
+      <div class="toggle-switch" id="deteToggleEdit"></div>
+      <input type="color" id="deteColorPicker" value="${movie?.ratingColors?.dete || '#fbbf24'}" style="width: 50px; height: 40px; border: none; border-radius: 8px; cursor: pointer; margin-left: auto;" />
+    </div>
+    <div id="deteSliderContainerEdit" style="display: ${hasDete ? 'block' : 'none'}; margin-bottom: 1rem;">
+      <div style="display: flex; justify-content: space-between; align-items: center;">
+        <label>Puntuación</label>
+        <span id="deteValueEdit" style="font-weight: bold; color: var(--accent-secondary);">${hasDete ? movie.ratings.dete.toFixed(1) : '5.0'}</span>
+      </div>
+      <input type="range" id="deteSliderEdit" min="0" max="10" step="0.5" value="${hasDete ? movie.ratings.dete : 5}" />
+    </div>
+
+    <div class="toggle-container" style="align-items: center;">
+      <label for="aliToggleEdit">Rating de Ali</label>
+      <div class="toggle-switch" id="aliToggleEdit"></div>
+      <input type="color" id="aliColorPicker" value="${movie?.ratingColors?.ali || '#34d399'}" style="width: 50px; height: 40px; border: none; border-radius: 8px; cursor: pointer; margin-left: auto;" />
+    </div>
+    <div id="aliSliderContainerEdit" style="display: ${hasAli ? 'block' : 'none'}; margin-bottom: 1rem;">
+      <div style="display: flex; justify-content: space-between; align-items: center;">
+        <label>Puntuación</label>
+        <span id="aliValueEdit" style="font-weight: bold; color: var(--accent-secondary);">${hasAli ? movie.ratings.ali.toFixed(1) : '5.0'}</span>
+      </div>
+      <input type="range" id="aliSliderEdit" min="0" max="10" step="0.5" value="${hasAli ? movie.ratings.ali : 5}" />
+    </div>
+
+    <div class="btn-group">
+      <button id="saveMovieEdit">Guardar cambios</button>
+      <button id="cancelMovieEdit" style="background: #6b7280;">Cancelar</button>
+    </div>
+  `;
+
+  form.appendChild(modal);
+  document.getElementById("modalContainer").innerHTML = "";
+  document.getElementById("modalContainer").appendChild(form);
+
+  // ── Referencias directas ──
+  const elaToggleEdit   = modal.querySelector("#elaToggleEdit");
+  const deteToggleEdit  = modal.querySelector("#deteToggleEdit");
+  const aliToggleEdit   = modal.querySelector("#aliToggleEdit");
+  const elaContainerEdit  = modal.querySelector("#elaSliderContainerEdit");
+  const deteContainerEdit = modal.querySelector("#deteSliderContainerEdit");
+  const aliContainerEdit  = modal.querySelector("#aliSliderContainerEdit");
+  const elaSliderEdit   = modal.querySelector("#elaSliderEdit");
+  const deteSliderEdit  = modal.querySelector("#deteSliderEdit");
+  const aliSliderEdit   = modal.querySelector("#aliSliderEdit");
+  const elaValueEdit    = modal.querySelector("#elaValueEdit");
+  const deteValueEdit   = modal.querySelector("#deteValueEdit");
+  const aliValueEdit    = modal.querySelector("#aliValueEdit");
+
+  // ──Set initial toggle states ──
+  if (hasEla) elaToggleEdit.classList.add("active");
+  if (hasDete) deteToggleEdit.classList.add("active");
+  if (hasAli) aliToggleEdit.classList.add("active");
+
+  // ── Toggle listeners ──
+  elaToggleEdit.addEventListener("click", (e) => {
+    e.stopPropagation();
+    elaToggleEdit.classList.toggle("active");
+    elaContainerEdit.style.display = elaToggleEdit.classList.contains("active") ? "block" : "none";
+  });
+
+  deteToggleEdit.addEventListener("click", (e) => {
+    e.stopPropagation();
+    deteToggleEdit.classList.toggle("active");
+    deteContainerEdit.style.display = deteToggleEdit.classList.contains("active") ? "block" : "none";
+  });
+
+  aliToggleEdit.addEventListener("click", (e) => {
+    e.stopPropagation();
+    aliToggleEdit.classList.toggle("active");
+    aliContainerEdit.style.display = aliToggleEdit.classList.contains("active") ? "block" : "none";
+  });
+
+  // ── Slider listeners ──
+  elaSliderEdit.addEventListener("input",  () => { elaValueEdit.textContent  = parseFloat(elaSliderEdit.value).toFixed(1); });
+  deteSliderEdit.addEventListener("input", () => { deteValueEdit.textContent = parseFloat(deteSliderEdit.value).toFixed(1); });
+  aliSliderEdit.addEventListener("input",  () => { aliValueEdit.textContent  = parseFloat(aliSliderEdit.value).toFixed(1); });
+
+  // ── Cancelar ──
+  const cancelBtnEdit = modal.querySelector("#cancelMovieEdit");
+  cancelBtnEdit.addEventListener("click", (e) => {
+    e.stopPropagation();
+    form.remove();
+  });
+
+  // ── Guardar ──
+  const saveBtnEdit = modal.querySelector("#saveMovieEdit");
+  saveBtnEdit.addEventListener("click", async (e) => {
+    e.stopPropagation();
+    try {
+      const updatedData = {
+        ratings: {
+          ela:  elaToggleEdit.classList.contains("active")  ? parseFloat(elaSliderEdit.value)  : null,
+          dete: deteToggleEdit.classList.contains("active") ? parseFloat(deteSliderEdit.value) : null,
+          ali:  aliToggleEdit.classList.contains("active")  ? parseFloat(aliSliderEdit.value)  : null,
+        },
+        ratingColors: {
+          ela:  modal.querySelector("#elaColorPicker").value,
+          dete: modal.querySelector("#deteColorPicker").value,
+          ali:  modal.querySelector("#aliColorPicker").value,
+        }
+      };
+
+      const movieRef = doc(db, "users", auth.currentUser.uid, "movies", movieId);
+      await updateDoc(movieRef, updatedData);
+      await loadMovies();
+      form.remove();
+      // Reabrir el modal del día
+      const dateStr = movie.date;
+      const [year, month, day] = dateStr.split('-').map(Number);
+      openDayModal(year, month - 1, day);
+    } catch (e) {
+      alert("Error al guardar: " + e.message);
+    }
+  });
+
+  form.onclick = e => { if (e.target === form) form.remove(); };
 }
 
 /* ADD MOVIE FORM */
@@ -612,6 +797,11 @@ function openAddMovieForm(year, month, day) {
             ela:  elaToggle.classList.contains("active")  ? parseFloat(elaSlider.value)  : null,
             dete: deteToggle.classList.contains("active") ? parseFloat(deteSlider.value) : null,
             ali:  aliToggle.classList.contains("active")  ? parseFloat(aliSlider.value)  : null,
+          },
+          ratingColors: {
+            ela:  "#60a5fa",
+            dete: "#fbbf24",
+            ali:  "#34d399",
           },
           createdAt: serverTimestamp()
         }
