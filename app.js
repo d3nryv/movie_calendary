@@ -499,7 +499,7 @@ function openAddMovieForm(year, month, day) {
 
     <div class="toggle-container">
       <label for="elaToggle">Rating de Ela</label>
-      <button class="toggle-switch" id="elaToggle"></button>
+      <div class="toggle-switch" id="elaToggle"></div>
     </div>
     <div id="elaSliderContainer" style="display: none; margin-bottom: 1rem;">
       <div style="display: flex; justify-content: space-between; align-items: center;">
@@ -511,7 +511,7 @@ function openAddMovieForm(year, month, day) {
 
     <div class="toggle-container">
       <label for="deteToggle">Rating de Dete</label>
-      <button class="toggle-switch" id="deteToggle"></button>
+      <div class="toggle-switch" id="deteToggle"></div>
     </div>
     <div id="deteSliderContainer" style="display: none; margin-bottom: 1rem;">
       <div style="display: flex; justify-content: space-between; align-items: center;">
@@ -523,7 +523,7 @@ function openAddMovieForm(year, month, day) {
 
     <div class="toggle-container">
       <label for="aliToggle">Rating de Ali</label>
-      <button class="toggle-switch" id="aliToggle"></button>
+      <div class="toggle-switch" id="aliToggle"></div>
     </div>
     <div id="aliSliderContainer" style="display: none; margin-bottom: 1rem;">
       <div style="display: flex; justify-content: space-between; align-items: center;">
