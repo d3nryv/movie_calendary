@@ -17,10 +17,6 @@ import {
   orderBy
 } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
 
-console.log("✓ App.js cargado, variables importadas");
-console.log("Auth object:", auth);
-console.log("DB object:", db);
-
 /* GLOBAL STATE */
 let currentView = "calendar";
 let allMovies = [];
@@ -43,7 +39,6 @@ function toggleAuthForm(e) {
 /* AUTH STATE LISTENER */
 onAuthStateChanged(auth, async user => {
   if (user) {
-    console.log("✓ Usuario autenticado:", user.email);
     currentMonth = new Date().getMonth();
     currentYear = new Date().getFullYear();
     document.getElementById("loginView").style.display = "none";
@@ -51,7 +46,6 @@ onAuthStateChanged(auth, async user => {
     await loadMovies();
     renderCalendar();
   } else {
-    console.log("✓ No hay usuario autenticado");
     document.getElementById("loginView").style.display = "flex";
     document.getElementById("appView").style.display = "none";
   }
@@ -59,33 +53,23 @@ onAuthStateChanged(auth, async user => {
 
 /* SETUP LISTENERS ON DOM READY */
 document.addEventListener("DOMContentLoaded", () => {
-  console.log("✓ DOM cargado, configurando eventos...");
   
   /* LOGIN */
   const loginBtn = document.getElementById("loginBtn");
-  console.log("loginBtn encontrado?", !!loginBtn);
   
   if (loginBtn) {
-    console.log("Añadiendo listener al botón login");
     loginBtn.addEventListener("click", async (e) => {
-      console.log("✓ Click en botón login registrado!");
       e.preventDefault();
       
       try {
         const email = document.getElementById("loginEmail").value;
         const password = document.getElementById("loginPassword").value;
         
-        console.log("Email:", email, "Contraseña:", password ? "***" : "vacía");
-        
         if (!email || !password) {
-          console.log("Campos vacíos");
           document.getElementById("loginError").innerText = "Por favor rellena todos los campos";
           return;
         }
-        
-        console.log("Intentando iniciar sesión con:", email);
         await signInWithEmailAndPassword(auth, email, password);
-        console.log("✓ Login exitoso!");
         document.getElementById("loginEmail").value = "";
         document.getElementById("loginPassword").value = "";
       } catch (e) {
@@ -115,12 +99,9 @@ document.addEventListener("DOMContentLoaded", () => {
 
   /* SIGNUP */
   const signupBtn = document.getElementById("signupBtn");
-  console.log("signupBtn encontrado?", !!signupBtn);
   
   if (signupBtn) {
-    console.log("Añadiendo listener al botón signup");
     signupBtn.addEventListener("click", async (e) => {
-      console.log("✓ Click en botón signup registrado!");
       e.preventDefault();
       
       try {
@@ -143,9 +124,7 @@ document.addEventListener("DOMContentLoaded", () => {
           return;
         }
         
-        console.log("Intentando registrar:", email);
         await createUserWithEmailAndPassword(auth, email, password);
-        console.log("✓ Registro exitoso!");
         document.getElementById("signupEmail").value = "";
         document.getElementById("signupPassword").value = "";
         document.getElementById("signupPasswordConfirm").value = "";
@@ -175,7 +154,6 @@ document.addEventListener("DOMContentLoaded", () => {
   const logoutBtn = document.getElementById("logoutBtn");
   if (logoutBtn) {
     logoutBtn.addEventListener("click", () => {
-      console.log("Cerrando sesión...");
       signOut(auth);
     });
   }
@@ -214,8 +192,6 @@ document.addEventListener("DOMContentLoaded", () => {
       renderCalendar();
     });
   }
-  
-  console.log("✓ Todos los event listeners configurados");
 });
 
 /* EVENT DELEGATION para botones dinámicos */
@@ -226,9 +202,7 @@ document.addEventListener("click", (e) => {
     e.preventDefault();
     e.stopPropagation();
     const movieId = deleteBtn.dataset.movieId;
-    console.log("✓ Click en eliminar película:", movieId);
     const modalBg = deleteBtn.closest(".modal-bg");
-    console.log("Modal encontrado:", !!modalBg);
     deleteMovie(movieId, modalBg);
     return;
   }
@@ -237,7 +211,6 @@ document.addEventListener("click", (e) => {
   if (e.target.id === "cancelMovie") {
     e.preventDefault();
     e.stopPropagation();
-    console.log("✓ Click en cancelar");
     const form = e.target.closest(".modal-bg");
     if (form) form.remove();
     return;
@@ -247,7 +220,6 @@ document.addEventListener("click", (e) => {
   if (e.target.classList.contains("toggle-switch")) {
     e.preventDefault();
     e.stopPropagation();
-    console.log("✓ Toggle rating");
     const containerId = e.target.id + "Container";
     const container = document.getElementById(containerId);
     if (container) {
@@ -726,4 +698,5 @@ function openAddMovieForm(year, month, day) {
 }
 
 /* STATS/RANKINGS */
+
 /* Rankings view removed per user request */
