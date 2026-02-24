@@ -61,19 +61,33 @@ body {
 html, body { overflow-x: hidden; }
 
 header {
-  display: flex;
-  justify-content: space-between;
+  display: grid;
+  grid-template-columns: 1fr auto 1fr;
   align-items: center;
   padding: 1rem 2rem;
   border-bottom: 1px solid var(--border);
   gap: 1rem;
-  flex-wrap: wrap;
+  position: relative;
+}
+
+.header-left {
+  display: flex;
+  align-items: center;
+  justify-content: flex-start;
 }
 
 .header-left h1 {
   margin: 0;
   font-size: 1.8rem;
   font-weight: 700;
+  text-align: center;
+  /* center column holds the title */
+}
+
+/* The h1 sits in the center column of the grid */
+header > .header-left {
+  grid-column: 2;
+  justify-content: center;
 }
 
 nav {
@@ -81,6 +95,15 @@ nav {
   gap: 0.8rem;
   align-items: center;
   flex-wrap: wrap;
+  grid-column: 3;
+  justify-content: flex-end;
+}
+
+.header-theme {
+  grid-column: 1;
+  display: flex;
+  align-items: center;
+  justify-content: flex-start;
 }
 
 button {
@@ -97,6 +120,26 @@ button {
   align-items: center;
   gap: 0.5rem;
   transition: all var(--transition);
+}
+
+/* Botón de eliminar película - ajustar hitbox */
+.btn-delete {
+  background: transparent;
+  box-shadow: none;
+  padding: 8px;
+  border-radius: 6px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--text);
+  opacity: 0.6;
+  transition: opacity var(--transition), transform var(--transition);
+}
+
+.btn-delete:hover {
+  opacity: 1;
+  transform: scale(1.1);
+  box-shadow: 0 2px 8px var(--shadow);
 }
 
 button:hover {
@@ -430,46 +473,132 @@ button svg {
 
 /* Improve contrast for day cards in light mode */
 body.light .calendar-day {
-  border-color: rgba(30,30,30,0.06);
-  box-shadow: 0 6px 14px rgba(0,0,0,0.06);
+  border-color: rgba(30,30,30,0.12);
+  box-shadow: 0 6px 14px rgba(0,0,0,0.07);
+}
+
+body.light .calendar-day-number {
+  color: #111827;
+  font-weight: 800;
+}
+
+body.light .calendar-day {
+  color: #111827;
 }
 
 /* Mobile-specific header tweaks: move theme toggle left and logout right, hide calendar button */
 @media (max-width: 768px) {
-  header { align-items: center; }
-  nav { width: 100%; justify-content: center; }
-  .theme-btn { order: -1; }
-  #logoutBtn { order: 1; }
+  header {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0.75rem 1rem;
+    position: relative;
+    min-height: 56px;
+    flex-wrap: nowrap;
+  }
+  /* Hide header-left div on mobile; title goes to absolute center */
+  .header-left {
+    position: absolute;
+    left: 50%;
+    transform: translateX(-50%);
+    pointer-events: none;
+  }
+  .header-left h1 {
+    font-size: 1.3rem;
+    white-space: nowrap;
+  }
+  nav {
+    display: contents;
+  }
+  .header-theme {
+    order: -1;
+    display: flex;
+    align-items: center;
+  }
+  #logoutBtn {
+    order: 1;
+    display: flex;
+    align-items: center;
+    padding: 10px;
+  }
   #calendarBtn { display: none; }
   /* On small screens ensure calendar nav fits and buttons sit beside title */
   .calendar-nav { justify-content: space-between; }
   .calendar-nav { position: relative; }
   .calendar-nav .calendar-title { position: absolute; left: 50%; transform: translateX(-50%); }
+
+  /* Use short weekday labels */
+  .weekdays .weekday-label-full { display: none; }
+  .weekdays .weekday-label-short { display: block; }
 }
 
 /* On small screens place theme toggle top-left and logout top-right */
 @media (max-width: 480px) {
-  header { position: relative; height: 56px; }
-  .theme-btn { position: absolute; left: 10px; top: 50%; transform: translateY(-50%); z-index: 60; }
-  #logoutBtn { position: absolute; right: 10px; top: 50%; transform: translateY(-50%); z-index: 60; }
-  nav { justify-content: center; }
-  /* hide calendar button on smallest screens as well */
+  header {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0.6rem 0.75rem;
+    position: relative;
+    min-height: 52px;
+    flex-wrap: nowrap;
+  }
+  .header-left {
+    position: absolute;
+    left: 50%;
+    transform: translateX(-50%);
+    pointer-events: none;
+  }
+  .header-left h1 { font-size: 1.1rem; white-space: nowrap; }
+  nav { display: contents; }
+  .header-theme { display: flex; align-items: center; }
+  #logoutBtn { display: flex; align-items: center; padding: 8px; }
   #calendarBtn { display: none; }
-  /* Center title absolutely and ensure side buttons don't overlap */
-  .calendar-nav { position: relative; }
+  /* Hide movie items in calendar cells on mobile */
+  .calendar-day-movies { display: none; }
+  /* Compact grid */
+  .calendar-nav { position: relative; padding-top: 0.75rem; gap: 0.8rem; }
   .calendar-nav .calendar-title { position: absolute; left: 50%; transform: translateX(-50%); font-size: 1.1rem; }
-  .calendar-nav .nav-btn { padding: 0.2rem 0.5rem; }
-  .calendar-grid { gap: 6px; grid-auto-rows: minmax(80px, auto); }
-  .calendar-day { min-height: 80px; padding: 0.5rem; }
-  .weekdays > div { font-size: 0.7rem; }
+  .calendar-nav .nav-btn { padding: 0.2rem 0.5rem; font-size: 0.85rem; }
+  .calendar-grid { gap: 4px; grid-auto-rows: minmax(52px, auto); }
+  .calendar-day { min-height: 52px; padding: 0.4rem; }
+  .calendar-day-number { font-size: 0.85rem; margin-bottom: 0; }
+  /* Short weekday labels */
+  .weekdays .weekday-label-full { display: none; }
+  .weekdays .weekday-label-short { display: block; }
+  .weekdays > div { font-size: 0.7rem; padding: 0.3rem 0.1rem; }
 }
 
 /* Landscape on small devices: keep title centered and buttons at sides */
 @media (max-width: 812px) and (orientation: landscape) {
+  header {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: space-between;
+    position: relative;
+    padding: 0.5rem 1rem;
+    min-height: 48px;
+  }
+  .header-left {
+    position: absolute;
+    left: 50%;
+    transform: translateX(-50%);
+    pointer-events: none;
+  }
+  .header-left h1 { font-size: 1.1rem; white-space: nowrap; }
+  nav { display: contents; }
+  .header-theme { display: flex; align-items: center; }
+  #logoutBtn { display: flex; align-items: center; padding: 8px; }
+  /* Hide movie items in cells on landscape mobile too */
+  .calendar-day-movies { display: none; }
   .calendar-nav { justify-content: space-between; padding: 0 8px; }
-  .calendar-nav .calendar-title { font-size: 1.4rem; }
-  .calendar-grid { grid-auto-rows: minmax(90px, auto); gap: 6px; }
-  .calendar-day { min-height: 90px; }
+  .calendar-nav .calendar-title { font-size: 1.2rem; }
+  .calendar-grid { grid-auto-rows: minmax(70px, auto); gap: 5px; }
+  .calendar-day { min-height: 70px; }
 }
 
 @media (max-width: 640px) {
@@ -955,30 +1084,13 @@ select:focus {
 }
 
 @media (max-width: 768px) {
-  header {
-    flex-direction: column;
-    padding: 1rem;
-  }
-
   .header-left h1 {
     font-size: 1.5rem;
   }
 
-  nav {
-    width: 100%;
-    justify-content: space-between;
-  }
-
-  nav button {
-    padding: 10px 12px;
-    font-size: 0.9rem;
-    flex: 1;
-    justify-content: center;
-  }
-
   #app {
     padding: 0.8rem;
-    height: calc(100vh - 140px);
+    height: calc(100vh - 120px);
   }
 
   .calendar-grid {
@@ -1101,6 +1213,14 @@ select:focus {
   button {
     padding: 12px 16px;
   }
+}
+
+.weekday-label-short { display: none; }
+.weekday-label-full { display: inline; }
+
+@media (max-width: 480px) {
+  .weekday-label-short { display: inline !important; }
+  .weekday-label-full { display: none !important; }
 }
 
 /* SCROLLBAR */
